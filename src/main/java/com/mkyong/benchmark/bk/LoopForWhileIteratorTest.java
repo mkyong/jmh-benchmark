@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class LoopSimpleTest {
+public class LoopForWhileIteratorTest {
 
     private static List<String> DATA_FOR_TESTING = Arrays.asList(createArray());
 
     public static void main(String[] argv) {
 
-        LoopSimpleTest obj = new LoopSimpleTest();
+        LoopForWhileIteratorTest obj = new LoopForWhileIteratorTest();
 
         obj.loopIterator();
         obj.loopFor();

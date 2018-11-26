@@ -7,28 +7,23 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/*
-http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/
-*/
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
-//@Warmup(iterations = 3)
-//@Measurement(iterations = 8)
-public class BenchmarkLoop {
+@Fork(value = 1, jvmArgs = {"-Xms2G", "-Xmx2G"})
+@Warmup(iterations = 5)
+@Measurement(iterations = 10)
+public class BenchmarkForwardReverseLoop {
 
     private static final int N = 10_000_000;
 
     private static List<String> DATA_FOR_TESTING = createData();
 
-    public static void main(String[] args) throws RunnerException {
-
+    public static void main(String[] argv) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(BenchmarkLoop.class.getSimpleName())
+                .include(BenchmarkForwardReverseLoop.class.getSimpleName())
                 .forks(1)
                 .build();
 
@@ -36,37 +31,22 @@ public class BenchmarkLoop {
     }
 
     @Benchmark
-    public void loopFor() {
+    public void forwardLoop() {
         for (int i = 0; i < DATA_FOR_TESTING.size(); i++) {
             String s = DATA_FOR_TESTING.get(i);
+            //System.out.println(s);
         }
     }
 
     @Benchmark
-    public void loopWhile() {
-        int i = 0;
-        while (i < DATA_FOR_TESTING.size()) {
+    public void reverseLoop() {
+        for (int i = DATA_FOR_TESTING.size() - 1; i >= 0; i--) {
             String s = DATA_FOR_TESTING.get(i);
-            i++;
-        }
-    }
-
-    @Benchmark
-    public void loopForEach() {
-        for (String s : DATA_FOR_TESTING) {
-        }
-    }
-
-    @Benchmark
-    public void loopIterator() {
-        Iterator<String> iterator = DATA_FOR_TESTING.iterator();
-        while (iterator.hasNext()) {
-            String next = iterator.next();
+            //System.out.println(s);
         }
     }
 
     private static List<String> createData() {
-
         List<String> data = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             data.add("Number : " + i);
