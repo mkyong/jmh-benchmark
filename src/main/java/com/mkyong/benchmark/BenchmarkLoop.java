@@ -1,6 +1,7 @@
 package com.mkyong.benchmark;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -16,14 +17,16 @@ http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org
 */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
+@State(Scope.Benchmark)
 @Fork(value = 2, jvmArgs = {"-Xms2G", "-Xmx2G"})
 //@Warmup(iterations = 3)
 //@Measurement(iterations = 8)
 public class BenchmarkLoop {
 
-    private static final int N = 10_000_000;
+    @Param({"10000000"})
+    private int N;
 
-    private static List<String> DATA_FOR_TESTING = createData();
+    private List<String> DATA_FOR_TESTING;
 
     public static void main(String[] args) throws RunnerException {
 
@@ -35,37 +38,43 @@ public class BenchmarkLoop {
         new Runner(opt).run();
     }
 
+    @Setup
+    public void setup(){
+        DATA_FOR_TESTING = createData();
+    }
+
     @Benchmark
-    public void loopFor() {
+    public void loopFor(Blackhole bh) {
         for (int i = 0; i < DATA_FOR_TESTING.size(); i++) {
-            String s = DATA_FOR_TESTING.get(i);
+            bh.consume(DATA_FOR_TESTING.get(i));
         }
     }
 
     @Benchmark
-    public void loopWhile() {
+    public void loopWhile(Blackhole bh) {
         int i = 0;
         while (i < DATA_FOR_TESTING.size()) {
-            String s = DATA_FOR_TESTING.get(i);
+            bh.consume(DATA_FOR_TESTING.get(i));
             i++;
         }
     }
 
     @Benchmark
-    public void loopForEach() {
+    public void loopForEach(Blackhole bh) {
         for (String s : DATA_FOR_TESTING) {
+            bh.consume(s);
         }
     }
 
     @Benchmark
-    public void loopIterator() {
+    public void loopIterator(Blackhole bh) {
         Iterator<String> iterator = DATA_FOR_TESTING.iterator();
         while (iterator.hasNext()) {
-            String next = iterator.next();
+            bh.consume(iterator.next());
         }
     }
 
-    private static List<String> createData() {
+    private List<String> createData() {
 
         List<String> data = new ArrayList<>();
         for (int i = 0; i < N; i++) {
