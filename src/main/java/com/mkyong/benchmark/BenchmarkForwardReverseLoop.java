@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class BenchmarkForwardReverseLoop {
 
-    @Param({"10000000"})
+    @Param({"1000000", "10000000"})
     private int N;
 
     private List<String> DATA_FOR_TESTING = createData();
@@ -34,23 +34,23 @@ public class BenchmarkForwardReverseLoop {
     }
 
     @Setup
-    public void setup(){
+    public void setup() {
         DATA_FOR_TESTING = createData();
     }
 
     @Benchmark
     public void forwardLoop(Blackhole bh) {
         for (int i = 0; i < DATA_FOR_TESTING.size(); i++) {
-            bh.consume(DATA_FOR_TESTING.get(i));
-            //System.out.println(s);
+            String s = DATA_FOR_TESTING.get(i);
+            bh.consume(s);
         }
     }
 
     @Benchmark
     public void reverseLoop(Blackhole bh) {
         for (int i = DATA_FOR_TESTING.size() - 1; i >= 0; i--) {
-            bh.consume(DATA_FOR_TESTING.get(i));
-            //System.out.println(s);
+            String s = DATA_FOR_TESTING.get(i);
+            bh.consume(s);
         }
     }
 

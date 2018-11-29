@@ -39,14 +39,15 @@ public class BenchmarkLoop {
     }
 
     @Setup
-    public void setup(){
+    public void setup() {
         DATA_FOR_TESTING = createData();
     }
 
     @Benchmark
     public void loopFor(Blackhole bh) {
         for (int i = 0; i < DATA_FOR_TESTING.size(); i++) {
-            bh.consume(DATA_FOR_TESTING.get(i));
+            String s = DATA_FOR_TESTING.get(i); //take out n consume, fair with foreach
+            bh.consume(s);
         }
     }
 
@@ -54,7 +55,8 @@ public class BenchmarkLoop {
     public void loopWhile(Blackhole bh) {
         int i = 0;
         while (i < DATA_FOR_TESTING.size()) {
-            bh.consume(DATA_FOR_TESTING.get(i));
+            String s = DATA_FOR_TESTING.get(i);
+            bh.consume(s);
             i++;
         }
     }
@@ -70,12 +72,12 @@ public class BenchmarkLoop {
     public void loopIterator(Blackhole bh) {
         Iterator<String> iterator = DATA_FOR_TESTING.iterator();
         while (iterator.hasNext()) {
-            bh.consume(iterator.next());
+            String s = iterator.next();
+            bh.consume(s);
         }
     }
 
     private List<String> createData() {
-
         List<String> data = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             data.add("Number : " + i);
